@@ -2,6 +2,8 @@
 #include <algorithm>
 #include <iostream>
 #include <string>
+#include <stdlib.h>
+#include <time.h>
 
 #include "functionsDEBUG.h"
 #include "functions.h"
@@ -26,7 +28,9 @@ int main() {
 	int snap;
 	int offset;
 
-	std::cout << "Input the number of rows generated ";
+	srand(time(NULL));
+
+	/*std::cout << "Input the number of rows generated ";
 	numberOfGenerations = INPUT_VALIDATOR.Input_Value_I(1, 100000, true);
 
 	std::cout << "Input the number of keys ";
@@ -52,17 +56,17 @@ int main() {
 	snap = INPUT_VALIDATOR.Input_Value_I(0, 10000, true);
 
 	std::cout << "Input Offset (ms) ";
-	offset = INPUT_VALIDATOR.Input_Value_I(0, 10000, true);
+	offset = INPUT_VALIDATOR.Input_Value_I(0, 10000, true);*/
 
 	//Parameter Testing Template <For quick testing>
 
-	/*keys = 18;
-	numberOfGenerations = 300;
+	keys = 18;
+	numberOfGenerations = 20;
 	anchor_limit = 2;
 	numberOfNotes = { 8,4 };
 	BPM = 146;
 	snap = 4;
-	offset = 53463;*/
+	offset = 53463;
 
 	//Function to Generate Chart
 	createChart(fullChartVector, numberOfGenerations, numberOfNotes, keys, anchor_limit);
@@ -70,7 +74,6 @@ int main() {
 	//Prints the chart
 	visualizer(fullChartVector, numberOfGenerations, keys);
 
-	//Prints the code for the chart
 	std::cout << std::endl << "[Generating Chart]" << std::endl;
 
 	for (int x = 0; x < numberOfGenerations; x++) {

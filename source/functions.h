@@ -5,6 +5,8 @@
 #include <iostream>
 #include <string>
 #include <algorithm>
+#include <time.h>
+#include <stdlib.h>
 
 void visualizer(std::vector< std::vector<bool> > &fullChartVector, int rows, int keys);
 
