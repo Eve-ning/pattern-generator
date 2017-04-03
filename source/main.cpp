@@ -58,45 +58,46 @@
 #include <vector>
 #include <algorithm>
 #include <iostream>
+#include <string>
 
 void visualizer(std::vector< std::vector<bool> > &fullChartVector, int rows, int keys);
+
 std::vector<int> generateChord(int numberOfNotes, int keys, std::vector<int> &avoid);
 
-void createChart(std::vector< std::vector<bool> > &fullChartVector, int numberOfGenerations, int numberOfNotes, int keys);
+void createChart(std::vector< std::vector<bool> > &fullChartVector, int numberOfGenerations, std::vector<int> numberOfNotes, int keys, int anchor_limit);
+
+//Vector Functions
+//std::vector<int> uniqueVector(std::vector<int> uniquedVector);
+//std::vector<int> joinVector(std::vector<int> firstVector, std::vector<int> secondVector);
+//int selfMultiplyVector(std::vector<int> multiplyVector);
+
+//Just to print things
+template<class TYPE>
+void printDEBUG(std::string message, TYPE parameter);
 
 //Debug Functions
 void displayVector(std::vector<int> displayedVector);
 void displayVector(std::vector<bool> displayedVector);
 
-const bool DEBUG = true;
-
 int main() {
 
 	int pause;
-
-	int	densityLevel;
-	int bracketDifficultyLevel;
-
-	std::vector<int> densityLevelList = {
-		1111,2111,2121,
-		2221,2222,3222,
-		3232,3332,3333,
-		4333,4343
-	};
 
 	//Generates the Chart
 	std::vector< std::vector<bool> > fullChartVector;
 	int keys;
 	int numberOfGenerations;
-	int numberOfNotes;
+	int anchor_limit;
+	std::vector<int> numberOfNotes;
 
 	//Parameters
 	numberOfGenerations = 100;
-	numberOfNotes = 3;
-	keys = 7;
+	numberOfNotes = { 20,10 };
+	keys = 40;
+	anchor_limit = 2;
 
 	//Function to Generate Chart
-	createChart(fullChartVector, numberOfGenerations, numberOfNotes, keys);
+	createChart(fullChartVector, numberOfGenerations, numberOfNotes, keys, anchor_limit);
 	
 	//Prints the chart
 	visualizer(fullChartVector, numberOfGenerations, keys);
@@ -109,8 +110,6 @@ int main() {
 void visualizer(std::vector< std::vector<bool> > &fullChartVector, int numberOfGenerations, int keys)
 {
 
-	std::cout << "[Visualizer]" << std::endl;
-
 	for (int x = (numberOfGenerations - 1); x > -1; x--) {
 
 		for (int y = 0; y < keys; y++) {
@@ -118,13 +117,13 @@ void visualizer(std::vector< std::vector<bool> > &fullChartVector, int numberOfG
 			if (fullChartVector[x][y] == true) {
 
 				//Means there is no note
-				std::cout << "_";
+				std::cout << "O ";
 
 			}
 			else {
 
 				//Means there is a note
-				std::cout << "O";
+				std::cout << "_ ";
 			}
 
 		}
@@ -138,8 +137,6 @@ void visualizer(std::vector< std::vector<bool> > &fullChartVector, int numberOfG
 //Output: (IVector) The chord generated
 std::vector<int> generateChord(int numberOfNotes, int keys, std::vector<int> &avoid)
 {
-
-	std::cout << "[Generate Chord]" << std::endl;
 
 	std::vector<int> chordList = {};
 	bool uniqueFlag;
@@ -162,12 +159,12 @@ std::vector<int> generateChord(int numberOfNotes, int keys, std::vector<int> &av
 
 			if (std::count(std::begin(chordList), std::end(chordList), pushBackNote) != 0 || std::count(std::begin(avoid), std::end(avoid), pushBackNote) != 0 ){
 
-				std::cout << "Threshold: " << threshold << std::endl;
 				threshold += 1;
 
-				if (threshold > 100) {
+				if (threshold > 500) {
 					uniqueFlag = true;
 				}
+
 				continue;
 			}
 			else {
@@ -184,40 +181,87 @@ std::vector<int> generateChord(int numberOfNotes, int keys, std::vector<int> &av
 
 //Creates the chart
 //Input: (BVectorVector) Full Chart Vector, (Int) Number of Generations, (Int) Number of Notes, (Int) Number of Keys
-void createChart(std::vector< std::vector<bool> >& fullChartVector, int numberOfGenerations, int numberOfNotes, int keys)
+void createChart(std::vector< std::vector<bool> >& fullChartVector, int numberOfGenerations, std::vector<int> numberOfNotes, int keys, int anchor_limit)
 {
 
 	std::vector<int> generateChordVector;
 	std::vector<int> avoidVector = {};
 
+	unsigned int numberOfNotesSize = numberOfNotes.size();
+
 	for (int x = 0; x < numberOfGenerations; x++) {
 
-		std::vector<bool> rowVector;
+		//We reset Avoid Vector every generation
+		avoidVector = {};
 
-		//Testing generateChord
-		generateChordVector = generateChord(numberOfNotes, keys, avoidVector);
+		std::cout << "[Generating Column " << x << "]" << std::endl;
 
-		std::cout << "[Generate Chord Vector]" << std::endl;
-		displayVector(generateChordVector);
+		//We Set up what to avoid first
 
 		//Sets Current chord vector to be used for avoid later
-		avoidVector = generateChordVector;
+		//Condition since first chord doesn't avoid anything
+		if (x > 0) {
+
+			for (int note = 0; note < keys; note++) {
+
+				//We refer to the previous chord as (x - 1)
+				if (fullChartVector[x - 1][note] == true) {
+
+					//We push back if there is a true on the previous column
+					avoidVector.push_back(note);
+
+				}
+
+			}
+		}
+
+		//The least amount of already generations for this to trigger
+		if (x >= (anchor_limit * 2)) {	
+
+			//We are cycling through all keys
+			for (int note = 0; note < keys; note++) {
+
+				int validate = 1;
+
+				//This cycles through 0 2 4 and so on, the even ones
+				for (int y = 0; y < anchor_limit; y++) {
+
+					int referenceIndex;
+
+					//Reference index is the index of the chart we are going to refer to for anchors
+					referenceIndex = x - (2 * (y + 1));
+
+					//If there isn't a note it's going to return 0 and validate will permanently turn 0
+					validate *= (int) fullChartVector[referenceIndex][note];
+
+				}
+
+				if (validate == 1) {
+
+					avoidVector.push_back(note);
+
+				}
+
+			}
+
+		}
+
+		unsigned int numberOfNotesSize = numberOfNotes.size();
+
+		//If the numberOfNotes is a list, we will cycle through that
+		generateChordVector = generateChord(numberOfNotes[x % numberOfNotesSize], keys, avoidVector);
+
+		std::vector<bool> rowVector;
 
 		for (int y = 0; y < keys; y++) {
 
 			//If the key here isn't in the list, we push back a false, vice versa
 			if (std::count(std::begin(generateChordVector), std::end(generateChordVector), y) != 0) {
-				rowVector.push_back(false);
-
-				std::cout << "[Row Vector]" << std::endl;
-				displayVector(rowVector);
+				rowVector.push_back(true);
 
 			}
 			else {
-				rowVector.push_back(true);
-
-				std::cout << "[Row Vector]" << std::endl;
-				displayVector(rowVector);
+				rowVector.push_back(false);
 
 			}
 
@@ -226,50 +270,103 @@ void createChart(std::vector< std::vector<bool> >& fullChartVector, int numberOf
 		fullChartVector.push_back(rowVector);
 
 	}
-
+	
 }
+
+////Takes the Vector and returns only unique values in it
+////Input: Vector to unique
+////Output: Unique Vector
+//std::vector<int> uniqueVector(std::vector<int> uniquedVector)
+//{
+//
+//	unsigned int uniquedVectorSize = uniquedVector.size();
+//	std::vector<int> newVector;
+//
+//	for (unsigned int x = 0; x < uniquedVectorSize; x++) {
+//
+//		if (std::count(std::begin(uniquedVector), std::begin(uniquedVector) + x, uniquedVector[x]) == 1) {
+//
+//			newVector.push_back(uniquedVector[x]);
+//
+//		}
+//
+//	}
+//
+//	return std::vector<int>();
+//}
+//
+////Takes 2 Vectors and joins them
+////Input: Vectors to join
+////Output: Joint Vector
+//std::vector<int> joinVector(std::vector<int> firstVector, std::vector<int> secondVector)
+//{
+//
+//	unsigned int firstVectorSize = firstVector.size();
+//
+//	for (unsigned int x = 0; x < firstVectorSize; x++) {
+//
+//		secondVector.push_back(firstVector[x]);
+//
+//	}
+//
+//	return secondVector;
+//
+//}
+//
+//int selfMultiplyVector(std::vector<int> multiplyVector)
+//{
+//	unsigned int multiplyVectorSize = multiplyVector.size();
+//	int result = 1;
+//
+//	for (unsigned int x = 0; x < multiplyVectorSize; x++) {
+//
+//		result *= multiplyVector[x];
+//
+//	}
+//
+//	return result;
+//}
 
 //Displays the Vector <Debug Function>
 //Input: (IVector) The Vector to display
 void displayVector(std::vector<int> displayedVector)
 {
+	unsigned int displayedVectorSize = displayedVector.size();
 
-	if (DEBUG == true) {
+	std::cout << "[DEBUG] Display Vector: ";
 
-		unsigned int displayedVectorSize = displayedVector.size();
+	for (unsigned int x = 0; x < displayedVectorSize; x++) {
 
-		std::cout << "[DEBUG] Display Vector: ";
-
-		for (unsigned int x = 0; x < displayedVectorSize; x++) {
-
-			std::cout << displayedVector[x] << ",";
-
-		}
-
-		std::cout << std::endl;
+		std::cout << displayedVector[x] << ",";
 
 	}
 
+	std::cout << std::endl;
 }
 
 //Displays the Vector <Debug Function>
 //Input: (IVector) The Vector to display
 void displayVector(std::vector<bool> displayedVector)
 {
+	
+	unsigned int displayedVectorSize = displayedVector.size();
 
-	if (DEBUG == true) {
+	std::cout << "[DEBUG] Display Vector: ";
 
-		unsigned int displayedVectorSize = displayedVector.size();
+	for (unsigned int x = 0; x < displayedVectorSize; x++) {
 
-		std::cout << "[DEBUG] Display Vector: ";
-
-		for (unsigned int x = 0; x < displayedVectorSize; x++) {
-
-			std::cout << displayedVector[x] << ",";
-
-		}
-
-		std::cout << std::endl;
+		std::cout << displayedVector[x] << ",";
 
 	}
+
+	std::cout << std::endl;
+	
+}
+
+template<class TYPE>
+void printDEBUG(std::string message, TYPE parameter)
+{
+
+	std::cout << "[" << message << "]: " << parameter << std::endl;
+
 }
