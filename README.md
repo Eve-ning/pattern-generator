@@ -1,16 +1,5 @@
 # Pattern Generator
 
-Program that generates patterns randomly
+Program that generates patterns randomly with configurable parameters
 
-Will probably add:
-- Changeable patterning difficulty
-- In console visualization of chart
-- Probably more stuff
-
-## Pattern Difficulty
-
-We will take the harder patterns and rate them "higher" so they appear less
-
-## Visualization
-
-Mostly just coding aesthetics 
+See the wiki for more details: [Wiki](https://github.com/Eve-ning/pattern-generator/wiki)
