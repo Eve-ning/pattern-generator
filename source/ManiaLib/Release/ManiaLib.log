@@ -1,0 +1,7 @@
+﻿  Compiler.cpp
+  Converter.cpp
+  Flooring.cpp
+  Input.cpp
+Input.cpp(153): warning C4244: 'argument': conversion from 'double' to 'const int', possible loss of data
+  Input_Validator.cpp
+  ManiaLib.vcxproj -> C:\Users\user\Documents\Visual Studio 2015\Projects\StaticLibrary\Release\ManiaLib.lib
