@@ -30,7 +30,7 @@ int main() {
 
 	srand(time(NULL));
 
-	/*std::cout << "Input the number of rows generated ";
+	std::cout << "Input the number of rows generated ";
 	numberOfGenerations = INPUT_VALIDATOR.Input_Value_I(1, 100000, true);
 
 	std::cout << "Input the number of keys ";
@@ -56,17 +56,17 @@ int main() {
 	snap = INPUT_VALIDATOR.Input_Value_I(0, 10000, true);
 
 	std::cout << "Input Offset (ms) ";
-	offset = INPUT_VALIDATOR.Input_Value_I(0, 10000, true);*/
+	offset = INPUT_VALIDATOR.Input_Value_I(0, 10000, true);
 
 	//Parameter Testing Template <For quick testing>
 
-	keys = 18;
-	numberOfGenerations = 20;
-	anchor_limit = 2;
-	numberOfNotes = { 8,4 };
-	BPM = 146;
-	snap = 4;
-	offset = 53463;
+	//keys = 18;
+	//numberOfGenerations = 20;
+	//anchor_limit = 2;
+	//numberOfNotes = { 8,4 };
+	//BPM = 146;
+	//snap = 4;
+	//offset = 53463;
 
 	//Function to Generate Chart
 	createChart(fullChartVector, numberOfGenerations, numberOfNotes, keys, anchor_limit);
