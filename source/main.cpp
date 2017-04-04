@@ -28,6 +28,11 @@ int main() {
 	int snap;
 	int offset;
 
+	int checkRange;
+	int checkThreshold;
+
+	int closestNeighbour;
+
 	srand(time(NULL));
 
 	std::cout << "Input the number of rows generated ";
@@ -35,9 +40,6 @@ int main() {
 
 	std::cout << "Input the number of keys ";
 	keys = INPUT_VALIDATOR.Input_Value_I(1, 18, true);
-
-	std::cout << "Input the maximum number of anchors ";
-	anchor_limit = INPUT_VALIDATOR.Input_Value_I(1, 10, true);
 
 	std::cout << "Input the note count pattern <Type -1 to stop input> " << std::endl;
 	numberOfNotesBuffer = INPUT_VALIDATOR.Input_Value_I(-1, keys, true);
@@ -49,6 +51,15 @@ int main() {
 
 	}
 
+	std::cout << "Input size of range to check " << std::endl;
+	checkRange = INPUT_VALIDATOR.Input_Value_I(1, numberOfGenerations, true);
+
+	std::cout << "Input threshold of anchors " << std::endl;
+	checkThreshold = INPUT_VALIDATOR.Input_Value_I(0, checkRange, true);
+
+	std::cout << "Input closest neighbour " << std::endl;
+	closestNeighbour = INPUT_VALIDATOR.Input_Value_I(0, 10000, true);
+
 	std::cout << "Input BPM ";
 	BPM = INPUT_VALIDATOR.Input_Value_I(0, 10000, true);
 
@@ -56,20 +67,22 @@ int main() {
 	snap = INPUT_VALIDATOR.Input_Value_I(0, 10000, true);
 
 	std::cout << "Input Offset (ms) ";
-	offset = INPUT_VALIDATOR.Input_Value_I(0, 10000, true);
+	offset = INPUT_VALIDATOR.Input_Value_I(0, 10000000, true);
 
 	//Parameter Testing Template <For quick testing>
 
-	//keys = 18;
-	//numberOfGenerations = 20;
-	//anchor_limit = 2;
-	//numberOfNotes = { 8,4 };
-	//BPM = 146;
-	//snap = 4;
-	//offset = 53463;
+	/*keys = 4;
+	numberOfGenerations = 1024;
+	checkRange = 11;
+	checkThreshold = 3;
+	closestNeighbour = 1;
+	numberOfNotes = { 1 };
+	BPM = 185;
+	snap = 8;
+	offset = 26020;*/
 
 	//Function to Generate Chart
-	createChart(fullChartVector, numberOfGenerations, numberOfNotes, keys, anchor_limit);
+	createChart(fullChartVector, numberOfGenerations, numberOfNotes, keys, checkRange, checkThreshold, closestNeighbour);
 	
 	//Prints the chart
 	visualizer(fullChartVector, numberOfGenerations, keys);

@@ -12,6 +12,6 @@ void visualizer(std::vector< std::vector<bool> > &fullChartVector, int rows, int
 
 std::vector<int> generateChord(int numberOfNotes, int keys, std::vector<int> &avoid);
 
-void createChart(std::vector< std::vector<bool> > &fullChartVector, int numberOfGenerations, std::vector<int> numberOfNotes, int keys, int anchor_limit);
+void createChart(std::vector< std::vector<bool> > &fullChartVector, int numberOfGenerations, std::vector<int> numberOfNotes, int keys, int checkRange, int checkThreshold, int closestNeighbour);
 
 #endif // !FUNCTIONS_H

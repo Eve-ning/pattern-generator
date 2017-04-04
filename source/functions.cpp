@@ -76,7 +76,7 @@ std::vector<int> generateChord(int numberOfNotes, int keys, std::vector<int> &av
 
 //Creates the chart
 //Input: (BVectorVector) Full Chart Vector, (Int) Number of Generations, (Int) Number of Notes, (Int) Number of Keys
-void createChart(std::vector< std::vector<bool> >& fullChartVector, int numberOfGenerations, std::vector<int> numberOfNotes, int keys, int anchor_limit)
+void createChart(std::vector< std::vector<bool> >& fullChartVector, int numberOfGenerations, std::vector<int> numberOfNotes, int keys, int checkRange, int checkThreshold, int closestNeighbour)
 {
 
 	std::vector<int> generateChordVector;
@@ -111,31 +111,48 @@ void createChart(std::vector< std::vector<bool> >& fullChartVector, int numberOf
 		}
 
 		//The least amount of already generations for this to trigger
-		if (x >= (anchor_limit * 2)) {
+		if (x > checkRange) {
 
 			//We are cycling through all keys
 			for (int note = 0; note < keys; note++) {
 
-				int validate = 1;
+				bool avoid_flag = false;
 
-				//This cycles through 0 2 4 and so on, the even ones
-				for (int y = 0; y < anchor_limit; y++) {
+				int checkThresholdCounter = 0;
+				//This cycles through all the items in checkRange
+				for (int y = 0; y < checkRange; y++) {
 
-					int referenceIndex;
-
-					//Reference index is the index of the chart we are going to refer to for anchors
-					referenceIndex = x - (2 * (y + 1));
-
-					//If there isn't a note it's going to return 0 and validate will permanently turn 0
-					validate *= (int)fullChartVector[referenceIndex][note];
+					if (fullChartVector[x - 2 - y][note] == true) {
+						checkThresholdCounter += 1;
+					}
 
 				}
 
-				if (validate == 1) {
+				//If the column does exceed the checkThreshold counter, we add into the avoid
+				if (checkThresholdCounter > checkThreshold) {
+
+					avoid_flag = true;
+
+				}
+
+				//Closest Neighbour will start from 1
+				for (int y = 0; y < closestNeighbour; y++) {
+
+					if (fullChartVector[x - (y + 2)][note] == true) {
+
+						avoid_flag = true;
+
+					}
+
+				}
+
+
+				if (avoid_flag == true) {
 
 					avoidVector.push_back(note);
 
 				}
+				
 
 			}
 
